@@ -1,0 +1,39 @@
+name: Folder Structure Lint
+
+on:
+  workflow_call:
+    inputs:
+      workingDirectory:
+        required: true
+        type: string
+      FailOnFindings:
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  folder_lint_check:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Debug - Check Files
+        run: ls -R
+        working-directory: ${{ inputs.workingDirectory }}
+
+      - name: Run Folder Structure Check
+        working-directory: ${{ inputs.workingDirectory }}
+        run: |
+          if [ -f .github/workflows/forbidden-files.txt ]; then
+            echo "Checking forbidden files..."
+            cat .github/workflows/forbidden-files.txt | while read file; do
+              if [ -f "$file" ]; then
+                echo "❌ Forbidden file found: $file"
+                if ${{ inputs.FailOnFindings }}; then
+                  exit 1
+                fi
+              fi
+            done
+          fi
+          echo "✅ Folder structure check passed!"

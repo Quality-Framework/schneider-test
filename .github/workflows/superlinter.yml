@@ -1,0 +1,55 @@
+name: Super-Linter Scan
+
+on:
+  workflow_call:
+    inputs:
+      workingDirectory:
+        description: "Directory to scan"
+        required: false
+        default: "."
+        type: string
+      failOnFindings:
+        description: "Fail pipeline if Super-Linter finds issues"
+        required: false
+        default: "false"
+        type: string
+
+jobs:
+  super-lint:
+    name: Run Super-Linter
+    runs-on: self-hosted
+
+    env:
+      WORKING_DIRECTORY: ${{ inputs.workingDirectory }}
+      FAIL_ON_FINDINGS: ${{ inputs.failOnFindings }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: ${{ github.sha }}
+
+      - name: Run Super-Linter
+        id: lint
+        uses: github/super-linter@v6
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          RUN_LOCAL: true
+          VALIDATE_TERRAFORM: true
+          VALIDATE_CHANGED_FILES: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOG_LEVEL: WARN
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          FILTER_REGEX_INCLUDE: "^${{ env.WORKING_DIRECTORY }}/"
+          CHECKOV_ARGS: "--download-external-modules"
+
+      - name: Fix ownership of modified files
+        run: |
+          echo "🔧 Resetting file ownership to avoid permission issues..."
+          sudo chown -R $USER:$USER .
+
+      - name: Handle Linter Failure (optional soft fail)
+        if: failure() && env.FAIL_ON_FINDINGS == 'false'
+        run: |
+          echo "⚠️ Linter found issues, but soft-fail is enabled. Marking step as successful."

@@ -1,0 +1,66 @@
+name: Terraform Quality Scan
+
+on:
+  workflow_call:
+    inputs:
+      workingDirectory:
+        description: "Working directory for Terraform commands"
+        required: true
+        type: string
+
+jobs:
+  run-quality-checks:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout qualityframework repository
+        uses: actions/checkout@v4
+        with:
+          path: qualityframework
+
+      - name: Debug - Check file paths
+        run: |
+          echo "Current Directory:"
+          pwd
+          echo "Files in repo:"
+          ls -R
+
+
+  terraform-format-check:
+    uses: ./.github/workflows/tffmt.yml
+    with:
+      workingDirectory: modules/resourcegroup
+
+  terraform-security-scan:
+    uses: ./.github/workflows/tfsec.yml
+    with:
+      workingDirectory: modules/resourcegroup
+
+  terraform-lint:
+    uses: ./.github/workflows/tflint.yml
+    with:
+      workingDirectory: modules/resourcegroup
+
+  terraform-docs:
+    uses: ./.github/workflows/tfdocs.yml
+    with:
+      workingDirectory: modules/resourcegroup
+
+  # terraform-version-lint:
+  #   uses: ./.github/workflows/versionlint.yml
+  #   with:
+  #     workingDirectory: modules/resourcegroup
+
+  checkov:
+    uses: ./.github/workflows/checkov.yml
+    with:
+      workingDirectory: modules/resourcegroup
+
+  # superlinter:
+  #   uses: ./.github/workflows/superlinter.yml
+  #   with:
+  #     workingDirectory: modules/resourcegroup
+
+  # folder-structure-lint:
+  #   uses: ./.github/workflows/folderslint.yml
+  #   with:
+  #     workingDirectory: modules/resourcegroup

@@ -1,0 +1,45 @@
+name: Version Lint Check
+
+on:
+  workflow_call:
+
+jobs:
+  version_lint_check:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensures all tags are available
+
+      - name: Install Git
+        run: sudo apt-get update && sudo apt-get install -y git
+
+      - name: Run Version Linting Check
+        shell: pwsh
+        run: |
+          Write-Host "🚀 Starting version linting check..."
+
+          # Check if version.json exists
+          if (-Not (Test-Path -Path version.json)) {
+            Write-Host "❌ ERROR: version.json file not found."
+            exit 1
+          }
+
+          # Read version.json and extract module_version
+          $versionJson = Get-Content -Raw -Path version.json | ConvertFrom-Json
+          $version = $versionJson.module_version -replace '[^0-9.]'
+
+          # Fetch all existing Git tags
+          $gitTags = git tag -l
+
+          Write-Host "🔎 Checking if tag $version exists..."
+
+          if ($gitTags -contains $version) {
+            Write-Host "❌ The tag $version already exists."
+            exit 1
+          } else {
+            Write-Host "✅ The tag $version does not exist. Proceeding..."
+          }
+      - name: Display Success
+        run: echo "Version linting check passed."

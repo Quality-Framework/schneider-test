@@ -1,0 +1,96 @@
+name: "Terraform Deployment"
+
+on:
+  workflow_call:
+    inputs:
+      workingDirectory:
+        description: "Working directory for Terraform commands"
+        required: true
+        type: string
+    secrets:
+      client-id:
+        required: true
+      tenant-id:
+        required: true
+      subscription-id:
+        required: true
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    env:
+      client-id: ${{ secrets.client-id}}
+      tenant-id: ${{ secrets.tenant-id}}
+      subscription-id: ${{ secrets.subscription-id}}
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: ${{ github.sha }}
+          
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+      - name: Install Node.js
+        run: |
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0  # Use the latest stable version
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.client-id}}
+          tenant-id: ${{ secrets.tenant-id}}
+          subscription-id: ${{ secrets.subscription-id}}
+          auth-type: SERVICE_PRINCIPAL
+
+      - name: Initialize Terraform
+        run: terraform init
+        working-directory: modules/resourcegroup
+
+      - name: Terraform Plan
+        run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="client_secret=${{ secrets.client-secret }}"
+        working-directory: modules/resourcegroup
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="client_secret=${{ secrets.client-secret }}"
+        working-directory: modules/resourcegroup
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="client_secret=${{ secrets.client-secret }}"
+        working-directory: modules/resourcegroup
+
+      # - name: Extract current version
+      #   id: get_version
+      #   run: |
+      #     RAW_VERSION=$(jq -r '.module_version' version.json)
+      #     VERSION="${RAW_VERSION#v}"  # Remove leading 'v'
+      #     echo "VERSION=$VERSION" >> $GITHUB_ENV
+      #     echo "::set-output name=version::$VERSION"
+
+      # - name: Create and push Git tag
+      #   run: |
+      #     git config --global user.name "github-actions"
+      #     git config --global user.email "github-actions@github.com"
+      #     git checkout main
+      #     git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Quality-Framework/qualityframework.git
+      #     # Optional: skip if tag already exists
+      #     if git rev-parse "$VERSION" >/dev/null 2>&1; then
+      #       echo "Tag $VERSION already exists. Skipping."
+      #     else
+      #       git tag $VERSION
+      #       git push origin $VERSION
+      #     fi
