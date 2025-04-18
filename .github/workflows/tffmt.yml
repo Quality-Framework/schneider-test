@@ -6,7 +6,7 @@ on:
       workingDirectory:
         description: "Working Directory"
         required: false
-        default: "modules/resourcegroup"
+        default: "."
         type: string
 
 jobs:
@@ -16,16 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Terraform
-        run: |
-          TF_VERSION="1.7.2"
-          curl -LO https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
-          unzip -o terraform_${TF_VERSION}_linux_amd64.zip
-          ls -la /usr/local/bin/
-          sudo mv terraform /usr/local/bin/
-          sudo chmod +x /usr/local/bin/terraform
-          ls -la /usr/local/bin/terraform
-          terraform version
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '>= 1.9, < 2.0.0'  # Use a version range
 
       - name: Initialize Terraform
         run: terraform init
