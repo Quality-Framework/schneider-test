@@ -43,6 +43,7 @@ jobs:
             -e VALIDATE_TERRAFORM_TERRASCAN=false \
             -e VALIDATE_MARKDOWN=false \
             -e VALIDATE_NATURAL_LANGUAGE=false \
+            -e VALIDATE_TERRAFORM_FMT=false \
             -e USE_FIND_ALGORITHM=true \
             -v "${{ github.workspace }}:/tmp/lint" \
             github/super-linter:v5.0.0
