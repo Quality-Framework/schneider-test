@@ -34,5 +34,4 @@ module "kv" {
   wait_for_rbac_before_key_operations = {
     create = "60s"
   }
-(*   depends_on = [module.privatednszone, module.vnet] *)
 }
