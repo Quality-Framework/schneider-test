@@ -41,8 +41,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LOG_LEVEL: WARN
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          FILTER_REGEX_INCLUDE: "^${{ env.WORKING_DIRECTORY }}/.*\\.tf$"
-        
+          FILTER_REGEX_INCLUDE: "^${{ env.WORKING_DIRECTORY }}/"
+          FILTER_REGEX_EXCLUDE: "README\\.md$"
+
       - name:  Fix file permissions after Super-Linter
         if: always()
         run: |
