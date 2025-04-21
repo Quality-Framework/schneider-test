@@ -47,7 +47,7 @@ jobs:
             --quiet \
             --compact \
             --skip-check "$SKIP_CHECKS" \
-            --download-external-modules false > checkov-output.json
+            --download-external-modules true > checkov-output.json
 
       - name: Show Checkov JSON output
         run: cat checkov-output.json || echo "No Checkov output found."
