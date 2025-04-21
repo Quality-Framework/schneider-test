@@ -45,7 +45,6 @@ jobs:
             -e VALIDATE_NATURAL_LANGUAGE=false \
             -e VALIDATE_TERRAFORM_FMT=false \
             -e USE_FIND_ALGORITHM=true \
-            -e JSCPD_THRESHOLD=10
             -v "${{ github.workspace }}:/tmp/lint" \
             github/super-linter:v5.0.0
 
