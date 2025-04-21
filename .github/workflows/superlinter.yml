@@ -45,6 +45,7 @@ jobs:
           CHECKOV_ARGS: "--download-external-modules"
 
       - name:  Fix file permissions after Super-Linter
+        if: always()
         run: |
           echo "Resetting file ownership to avoid permission issues..."
           sudo chown -R $(id -u):$(id -g) ${{ github.workspace }}
