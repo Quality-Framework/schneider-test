@@ -1,5 +1,5 @@
 module "kv" {
-  source              = "./modules/keyvault"
+  source              = "./modules/resourcegroup"
   name                = module.naming.key_vault.name_unique
   location            = var.location
   resource_group_name = var.rg_name
