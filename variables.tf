@@ -1,7 +1,7 @@
 variable "location" {
   description = "The Azure region where resources will be deployed"
   type        = string
-  defaul      = East US
+  defaut      = East US
 }
  
 variable "rg_name" {
