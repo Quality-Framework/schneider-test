@@ -44,12 +44,12 @@ jobs:
           FILTER_REGEX_INCLUDE: "^${{ env.WORKING_DIRECTORY }}/"
           CHECKOV_ARGS: "--download-external-modules"
 
-      - name: Fix ownership of modified files
+      - name:  Fix file permissions after Super-Linter
         run: |
-          echo "🔧 Resetting file ownership to avoid permission issues..."
-          sudo chown -R $USER:$USER .
+          echo "Resetting file ownership to avoid permission issues..."
+          sudo chown -R $(id -u):$(id -g) ${{ github.workspace }}
 
       - name: Handle Linter Failure (optional soft fail)
         if: failure() && env.FAIL_ON_FINDINGS == 'false'
         run: |
-          echo "⚠️ Linter found issues, but soft-fail is enabled. Marking step as successful."
+          echo "Linter found issues, but soft-fail is enabled. Marking step as successful."
