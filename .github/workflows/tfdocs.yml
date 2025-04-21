@@ -45,10 +45,6 @@ jobs:
           if [[ -f ".tfdocs/header.md" ]]; then echo "header=.tfdocs/header.md" >> $GITHUB_OUTPUT; else echo "header=main.tf" >> $GITHUB_OUTPUT; fi
           if [[ -f ".tfdocs/footer.md" ]]; then echo "footer=.tfdocs/footer.md" >> $GITHUB_OUTPUT; else echo "footer=variables.tf" >> $GITHUB_OUTPUT; fi
 
-      - name: Terraform Init 
-        run: |
-          terraform init
-
       - name: Generate README.md with terraform-docs
         continue-on-error: ${{ env.FAIL_ON_ERROR == 'false' }}
         run: |
