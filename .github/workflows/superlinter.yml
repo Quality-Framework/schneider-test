@@ -38,7 +38,7 @@ jobs:
           docker run --rm \
             -e RUN_LOCAL=true \
             -e LINTER_RULES_PATH=/ \
-            -e FILTER_REGEX_EXCLUDE=.*tfdocs/.* \
+            -e FILTER_REGEX_EXCLUDE=".*\\.github/.*|.*tfdocs/.*" \
             -e VALIDATE_TERRAFORM_TFLINT=false \
             -e VALIDATE_TERRAFORM_TERRASCAN=false \
             -e VALIDATE_MARKDOWN=false \
