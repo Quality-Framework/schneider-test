@@ -41,8 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LOG_LEVEL: WARN
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          FILTER_REGEX_INCLUDE: "^${{ env.WORKING_DIRECTORY }}/"
-          DISABLE_JSCPD: true
+          FILTER_REGEX_INCLUDE: "^${{ env.WORKING_DIRECTORY }}/.*\\.tf$"
         
       - name:  Fix file permissions after Super-Linter
         if: always()
