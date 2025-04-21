@@ -12,7 +12,7 @@ No providers.
 
 ## Resources
 
-No resources.
+No resources..
 
 ## Inputs
 
