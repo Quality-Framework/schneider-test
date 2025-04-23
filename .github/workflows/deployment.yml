@@ -26,23 +26,13 @@ jobs:
       client-id: ${{ secrets.client-id}}
       tenant-id: ${{ secrets.tenant-id}}
       subscription-id: ${{ secrets.subscription-id}}
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          path: ${{ github.sha }}
-          
-      - name: Install Azure CLI
-        run: |
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
-      - name: Install Node.js
-        run: |
-          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-          sudo apt-get install -y nodejs
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -54,43 +44,54 @@ jobs:
         with:
           client-id: ${{ secrets.client-id}}
           tenant-id: ${{ secrets.tenant-id}}
-          subscription-id: ${{ secrets.subscription-id}}
-          auth-type: SERVICE_PRINCIPAL
+          subscription-id: ${{ secrets.subscription-id}} 
 
       - name: Initialize Terraform
-        run: terraform init
-        working-directory: modules/resourcegroup
-
+        run: |
+          BRANCH_NAME="${BRANCH//\//-}"
+          echo "Using statefile: statefile-${BRANCH_NAME}.tfstate"
+          terraform init \
+            -backend-config="resource_group_name=${{vars.STATE_RESOURCE_GROUP_NAME}}" \
+            -backend-config="storage_account_name=${{vars.STATE_STORAGE_ACCOUNT_NAME}}" \
+            -backend-config="container_name=${{vars.STATE_CONTAINER_NAME}}" \
+            -backend-config="key=statefile-${BRANCH_NAME}.tfstate" \
+            -backend-config="subscription_id=${{ secrets.subscription-id}}" \
+            -backend-config="tenant_id=${{ secrets.tenant-id }}" \
+            -backend-config="client_id=${{ secrets.client-id }}"
+        env:
+          BRANCH: ${{ github.ref_name }}
+        working-directory: ${{ inputs.workingDirectory }}
+        
       - name: Terraform Plan
-        run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="client_secret=${{ secrets.client-secret }}"
-        working-directory: modules/resourcegroup
-
+        run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" 
+        working-directory: terraform_files
+        
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="client_secret=${{ secrets.client-secret }}"
-        working-directory: modules/resourcegroup
+        run: terraform apply -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" 
+        working-directory: terraform_files
 
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="client_secret=${{ secrets.client-secret }}"
-        working-directory: modules/resourcegroup
+        run: terraform destroy -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" 
+        working-directory: terraform_files
+        
+      - name: Extract current version
+        id: get_version
+        run: |
+          RAW_VERSION=$(jq -r '.module_version' version.json)
+          VERSION="${RAW_VERSION#v}"  # Remove leading 'v'
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "::set-output name=version::$VERSION"
 
-      # - name: Extract current version
-      #   id: get_version
-      #   run: |
-      #     RAW_VERSION=$(jq -r '.module_version' version.json)
-      #     VERSION="${RAW_VERSION#v}"  # Remove leading 'v'
-      #     echo "VERSION=$VERSION" >> $GITHUB_ENV
-      #     echo "::set-output name=version::$VERSION"
-
-      # - name: Create and push Git tag
-      #   run: |
-      #     git config --global user.name "github-actions"
-      #     git config --global user.email "github-actions@github.com"
-      #     git checkout main
-      #     git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Quality-Framework/qualityframework.git
-      #     # Optional: skip if tag already exists
-      #     if git rev-parse "$VERSION" >/dev/null 2>&1; then
-      #       echo "Tag $VERSION already exists. Skipping."
-      #     else
-      #       git tag $VERSION
-      #       git push origin $VERSION
-      #     fi
+      - name: Create and push Git tag
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git checkout main
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Quality-Framework/qualityframework.git
+          # Optional: skip if tag already exists
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "Tag $VERSION already exists. Skipping."
+          else
+            git tag $VERSION
+            git push origin $VERSION
+          fi
