@@ -31,9 +31,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          path: ${{ github.sha }}
           
       - name: Install Azure CLI
         run: |
@@ -47,7 +44,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.6.0  # Use the latest stable version
+          terraform_version: '>= 1.9, < 2.0.0' # Use the latest stable version
 
       - name: Azure Login
         uses: azure/login@v1
@@ -59,19 +56,19 @@ jobs:
 
       - name: Initialize Terraform
         run: terraform init
-        working-directory: modules/resourcegroup
+        working-directory: ${{ inputs.workingDirectory }}
 
       - name: Terraform Plan
-        run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="client_secret=${{ secrets.client-secret }}"
-        working-directory: modules/resourcegroup
+        run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="location=eastus"
+        working-directory: ${{ inputs.workingDirectory }}
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="client_secret=${{ secrets.client-secret }}"
-        working-directory: modules/resourcegroup
+        run: terraform apply -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="location=eastus"
+        working-directory: ${{ inputs.workingDirectory }}
 
       - name: Terraform Destroy
-        run: terraform destroy -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="client_secret=${{ secrets.client-secret }}"
-        working-directory: modules/resourcegroup
+        run: terraform destroy -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" 
+        working-directory: ${{ inputs.workingDirectory }}
 
       # - name: Extract current version
       #   id: get_version

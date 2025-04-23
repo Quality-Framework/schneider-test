@@ -19,8 +19,6 @@ jobs:
       FAIL_ON_ERROR: false
 
     steps:
-      # - name: Force cleanup with sudo
-      #   run: sudo rm -rf /home/azureuser/actions-runner/_work/Schneider-IAC/Schneider-IAC
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -30,6 +28,7 @@ jobs:
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }}"
+
       - name: Detect source branch
         id: source_branch
         run: |
@@ -71,7 +70,9 @@ jobs:
       - name: Fix ownership of files after terraform-docs
         run: |
           echo "🔧 Resetting file ownership to avoid permission issues..."
-          sudo chown -R $USER:$USER .
+          if [ "$(stat -c '%U' README.md)" != "$USER" ]; then
+            sudo chown -R $USER:$USER .
+          fi
 
       - name: Commit and push README.md
         continue-on-error: ${{ env.FAIL_ON_ERROR == 'false' }}
@@ -82,5 +83,4 @@ jobs:
           git add README.md
           git diff --staged --quiet || git commit -m "README.md (Re)generate by TF Docs"
           git push origin HEAD:${{ steps.source_branch.outputs.branch_name }}
-
-
+          git status  # Added to debug status after push
