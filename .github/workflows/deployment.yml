@@ -70,12 +70,11 @@ jobs:
         working-directory: ${{ inputs.workingDirectory }}
 
       - name: Terraform Plan
-        run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="location=eastus"
+        run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" 
         working-directory: ${{ inputs.workingDirectory }}
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" -var="location=eastus"
-        working-directory: ${{ inputs.workingDirectory }}
+        run: terraform apply -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" 
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" 
