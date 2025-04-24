@@ -1,31 +1,12 @@
-module "avm-res-keyvault-vault" {
-  source                          = "Azure/avm-res-keyvault-vault/azurerm"
-  version                         = "0.10.0"
-  location                        = var.location
-  name                            = var.name
-  resource_group_name             = var.resource_group_name
-  tenant_id                       = var.tenant_id
-  diagnostic_settings             = var.diagnostic_settings
-  enable_telemetry                = var.enable_telemetry
-  enabled_for_deployment          = var.enabled_for_deployment
-  enabled_for_disk_encryption     = var.enabled_for_disk_encryption
-  enabled_for_template_deployment = var.enabled_for_template_deployment
-  keys                            = var.keys
-  lock                            = var.lock
-  network_acls = {
-    bypass         = "AzureServices"
-    default_action = "Deny"
-  }
-  private_endpoints                       = var.private_endpoints
-  private_endpoints_manage_dns_zone_group = var.private_endpoints_manage_dns_zone_group
-  public_network_access_enabled           = false
-  purge_protection_enabled                = var.purge_protection_enabled
-  role_assignments                        = var.role_assignments
-  secrets                                 = var.secrets
-  secrets_value                           = var.secrets_value
-  sku_name                                = var.sku_name
-  soft_delete_retention_days              = var.soft_delete_retention_days
-  tags                                    = var.tags
-  wait_for_rbac_before_key_operations     = var.wait_for_rbac_before_key_operations
-  wait_for_rbac_before_secret_operations  = var.wait_for_rbac_before_secret_operations
+resource "azurerm_resource_group" "rg" {
+  name     = var.resource_group_name
+  location = var.location
+}
+
+output "resource_group_name" {
+  value = azurerm_resource_group.rg.name
+}
+
+output "resource_group_location" {
+  value = azurerm_resource_group.rg.location
 }
