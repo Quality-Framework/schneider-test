@@ -66,7 +66,7 @@ jobs:
             -backend-config="tenant_id=${{ secrets.tenant-id }}" \
             -backend-config="client_id=${{ secrets.client-id }}"
         env:
-          BRANCH: ${{ github.ref_name }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
         working-directory: ${{ inputs.workingDirectory }}
 
       - name: Terraform Plan
