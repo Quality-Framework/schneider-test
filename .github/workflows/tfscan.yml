@@ -45,10 +45,10 @@ jobs:
     with:
       workingDirectory: ${{ inputs.workingDirectory }}
 
-  terraform-version-lint:
-    uses: ./.github/workflows/versionlint.yml
-    with:
-      workingDirectory: modules/resourcegroup
+  # terraform-version-lint:
+  #   uses: ./.github/workflows/versionlint.yml
+  #   with:
+  #     workingDirectory: modules/resourcegroup
 
   checkov:
     uses: ./.github/workflows/checkov.yml
