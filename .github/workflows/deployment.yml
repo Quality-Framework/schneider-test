@@ -70,7 +70,7 @@ jobs:
         working-directory: ${{ inputs.workingDirectory }}
 
       - name: Terraform Plan
-        run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" -var="client_id=${{ secrets.client-id }}" 
+        run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" 
         working-directory: ${{ inputs.workingDirectory }}
 
       - name: Terraform Apply
