@@ -16,14 +16,6 @@ jobs:
     uses: ./.github/workflows/tfscan.yml
     with:
       workingDirectory: .
-      runTfFmt: true
-      runTfSec: false
-      runTfLint: true
-      runTfDocs: false
-      runCheckov: true
-      runSuperLinter: false
-      runFolderLint: true
-      runVersionLint: false
 
   # Step 2: Deploy using deploy.yml if scanning passes
   run-deploy:
