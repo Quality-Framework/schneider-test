@@ -42,14 +42,14 @@ on:
         required: false
         type: boolean
         default: true
-      runVersionLint:
-        description: "Run Terraform version lint"
+      versionlint:
+        description: "Run Version Linter"
         required: false
         type: boolean
         default: true
 
 jobs:
-  checkout:
+  run-quality-checks:
     runs-on: self-hosted
     steps:
       - name: Checkout qualityframework repository
@@ -64,50 +64,43 @@ jobs:
           echo "Files in repo:"
           ls -R
 
+
   terraform-format-check:
-    if: ${{ inputs.runTfFmt }}
     uses: ./.github/workflows/tffmt.yml
     with:
       workingDirectory: ${{ inputs.workingDirectory }}
 
   terraform-security-scan:
-    if: ${{ inputs.runTfSec }}
     uses: ./.github/workflows/tfsec.yml
     with:
       workingDirectory: ${{ inputs.workingDirectory }}
 
   terraform-lint:
-    if: ${{ inputs.runTfLint }}
     uses: ./.github/workflows/tflint.yml
     with:
       workingDirectory: ${{ inputs.workingDirectory }}
 
   terraform-docs:
-    if: ${{ inputs.runTfDocs }}
     uses: ./.github/workflows/tfdocs.yml
     with:
       workingDirectory: ${{ inputs.workingDirectory }}
 
+  # terraform-version-lint:
+  #   uses: ./.github/workflows/versionlint.yml
+  #   with:
+  #     workingDirectory: modules/resourcegroup
+
   checkov:
-    if: ${{ inputs.runCheckov }}
     uses: ./.github/workflows/checkov.yml
     with:
       workingDirectory: ${{ inputs.workingDirectory }}
 
   superlinter:
-    if: ${{ inputs.runSuperLinter }}
     uses: ./.github/workflows/superlinter.yml
     with:
       workingDirectory: ${{ inputs.workingDirectory }}
 
   folder-structure-lint:
-    if: ${{ inputs.runFolderLint }}
     uses: ./.github/workflows/folderslint.yml
-    with:
-      workingDirectory: ${{ inputs.workingDirectory }}
-
-  terraform-version-lint:
-    if: ${{ inputs.runVersionLint }}
-    uses: ./.github/workflows/versionlint.yml
     with:
       workingDirectory: modules/resourcegroup
