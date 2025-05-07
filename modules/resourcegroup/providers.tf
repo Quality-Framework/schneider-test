@@ -8,14 +8,6 @@ terraform {
     }
   }
 
-  backend "azurerm" {
-    use_oidc         = true
-    use_azuread_auth = true
-    # Other backend config values like tenant_id, client_id, subscription_id, etc., 
-    # should be passed via -backend-config during terraform init
-  }
-}
-
 provider "azurerm" {
   skip_provider_registration = true
 
