@@ -12,7 +12,7 @@ output "resource_group_location" {
 }
 
 resource "azurerm_storage_account" "storage" {
-  name                     = "qualityframeworksa12" # must be globally unique and 3-24 lowercase letters/numbers
+  name                     = "qualityframeworksa15" # must be globally unique and 3-24 lowercase letters/numbers
   resource_group_name      = azurerm_resource_group.rg.name
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
