@@ -7,17 +7,10 @@ terraform {
       version = ">= 3.117, < 5.0"
     }
   }
-
 provider "azurerm" {
-  skip_provider_registration = true
+  features {}
 
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-  }
-
-  use_oidc        = true
+  use_oidc        = true # Required for OIDC authentication
   subscription_id = var.subscription_id
   tenant_id       = var.tenant_id
 }
