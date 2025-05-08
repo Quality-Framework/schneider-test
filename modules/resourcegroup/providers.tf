@@ -11,12 +11,19 @@ terraform {
   backend "azurerm" {
     use_oidc         = true
     use_azuread_auth = true
-    # Note: All other values like tenant_id, client_id, etc. will be passed via -backend-config during init
+    # Other backend config values like tenant_id, client_id, subscription_id, etc., 
+    # should be passed via -backend-config during terraform init
   }
 }
 
 provider "azurerm" {
-  features {}
+  resource_provider_registrations = "disabled" # or "automatic" or "manual"
+
+  features {
+    resource_group {
+      prevent_deletion_if_contains_resources = false
+    }
+  }
 
   use_oidc        = true
   subscription_id = var.subscription_id
