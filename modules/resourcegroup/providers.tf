@@ -17,7 +17,7 @@ terraform {
 }
 
 provider "azurerm" {
-  resource_provider_registrations = "disabled" # or "automatic" or "manual"
+  resource_provider_registrations = "legacy" # replaces "disabled"
 
   features {
     resource_group {
