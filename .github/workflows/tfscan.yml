@@ -7,46 +7,6 @@ on:
         description: "Working directory for Terraform commands"
         required: true
         type: string
-      runTfFmt:
-        description: "Run terraform fmt"
-        required: false
-        type: boolean
-        default: true
-      runTfSec:
-        description: "Run tfsec scan"
-        required: false
-        type: boolean
-        default: true
-      runTfLint:
-        description: "Run tflint"
-        required: false
-        type: boolean
-        default: true
-      runTfDocs:
-        description: "Run terraform-docs"
-        required: false
-        type: boolean
-        default: true
-      runCheckov:
-        description: "Run Checkov scan"
-        required: false
-        type: boolean
-        default: true
-      runSuperLinter:
-        description: "Run Super Linter"
-        required: false
-        type: boolean
-        default: true
-      runFolderLint:
-        description: "Run Folder Structure Linter"
-        required: false
-        type: boolean
-        default: true
-      versionlint:
-        description: "Run Version Linter"
-        required: false
-        type: boolean
-        default: true
 
 jobs:
   run-quality-checks:
