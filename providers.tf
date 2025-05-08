@@ -17,7 +17,7 @@ terraform {
 }
 
 provider "azurerm" {
-  skip_provider_registration = true
+  resource_provider_registrations = "disabled" # or "automatic" or "manual"
 
   features {
     resource_group {
