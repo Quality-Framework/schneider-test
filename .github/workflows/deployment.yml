@@ -75,7 +75,8 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" 
-
+        working-directory: ${{ inputs.workingDirectory }}
+        
       - name: Terraform Destroy
         run: terraform destroy -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}"  
         working-directory: ${{ inputs.workingDirectory }}
