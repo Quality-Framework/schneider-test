@@ -25,42 +25,42 @@ jobs:
           ls -R
 
 
-  # terraform-format-check:
-  #   uses: ./.github/workflows/tffmt.yml
-  #   with:
-  #     workingDirectory: ${{ inputs.workingDirectory }}
+  terraform-format-check:
+    uses: ./.github/workflows/tffmt.yml
+    with:
+      workingDirectory: ${{ inputs.workingDirectory }}
 
-  # terraform-security-scan:
-  #   uses: ./.github/workflows/tfsec.yml
-  #   with:
-  #     workingDirectory: ${{ inputs.workingDirectory }}
+  terraform-security-scan:
+    uses: ./.github/workflows/tfsec.yml
+    with:
+      workingDirectory: ${{ inputs.workingDirectory }}
 
-  # terraform-lint:
-  #   uses: ./.github/workflows/tflint.yml
-  #   with:
-  #     workingDirectory: ${{ inputs.workingDirectory }}
+  terraform-lint:
+    uses: ./.github/workflows/tflint.yml
+    with:
+      workingDirectory: ${{ inputs.workingDirectory }}
 
-  # terraform-docs:
-  #   uses: ./.github/workflows/tfdocs.yml
-  #   with:
-  #     workingDirectory: ${{ inputs.workingDirectory }}
+  terraform-docs:
+    uses: ./.github/workflows/tfdocs.yml
+    with:
+      workingDirectory: ${{ inputs.workingDirectory }}
 
   # terraform-version-lint:
   #   uses: ./.github/workflows/versionlint.yml
   #   with:
   #     workingDirectory: modules/resourcegroup
 
-  # checkov:
-  #   uses: ./.github/workflows/checkov.yml
-  #   with:
-  #     workingDirectory: ${{ inputs.workingDirectory }}
+  checkov:
+    uses: ./.github/workflows/checkov.yml
+    with:
+      workingDirectory: ${{ inputs.workingDirectory }}
 
   superlinter:
     uses: ./.github/workflows/superlinter.yml
     with:
       workingDirectory: ${{ inputs.workingDirectory }}
 
-  # folder-structure-lint:
-  #   uses: ./.github/workflows/folderslint.yml
-  #   with:
-  #     workingDirectory: modules/resourcegroup
+  folder-structure-lint:
+    uses: ./.github/workflows/folderslint.yml
+    with:
+      workingDirectory: modules/resourcegroup
