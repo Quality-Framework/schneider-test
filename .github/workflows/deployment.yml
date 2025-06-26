@@ -58,36 +58,14 @@ jobs:
         run: terraform init
         working-directory: ${{ inputs.workingDirectory }}
 
-      - name: Terraform Plan
-        run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}"
-        working-directory: ${{ inputs.workingDirectory }}
+      # - name: Terraform Plan
+      #   run: terraform plan -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}"
+      #   working-directory: ${{ inputs.workingDirectory }}
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" 
-        working-directory: ${{ inputs.workingDirectory }}
+      # - name: Terraform Apply
+      #   run: terraform apply -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" 
+      #   working-directory: ${{ inputs.workingDirectory }}
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve -var="subscription_id=${{ secrets.subscription-id }}" -var="tenant_id=${{ secrets.tenant-id }}" 
         working-directory: ${{ inputs.workingDirectory }}
-
-      # - name: Extract current version
-      #   id: get_version
-      #   run: |
-      #     RAW_VERSION=$(jq -r '.module_version' version.json)
-      #     VERSION="${RAW_VERSION#v}"  # Remove leading 'v'
-      #     echo "VERSION=$VERSION" >> $GITHUB_ENV
-      #     echo "::set-output name=version::$VERSION"
-
-      # - name: Create and push Git tag
-      #   run: |
-      #     git config --global user.name "github-actions"
-      #     git config --global user.email "github-actions@github.com"
-      #     git checkout main
-      #     git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/Quality-Framework/qualityframework.git
-      #     # Optional: skip if tag already exists
-      #     if git rev-parse "$VERSION" >/dev/null 2>&1; then
-      #       echo "Tag $VERSION already exists. Skipping."
-      #     else
-      #       git tag $VERSION
-      #       git push origin $VERSION
-      #     fi
