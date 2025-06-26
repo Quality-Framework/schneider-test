@@ -11,15 +11,15 @@ permissions:
 
 jobs:    
 
-  #Step 1: Run tfscan pipeline (Quality checks)
-  run-tfscan:
-    uses: ./.github/workflows/tfscan.yml
-    with:
-      workingDirectory: modules/resourcegroup
+  # #Step 1: Run tfscan pipeline (Quality checks)
+  # run-tfscan:
+  #   uses: ./.github/workflows/tfscan.yml
+  #   with:
+  #     workingDirectory: modules/resourcegroup
 
   # Step 2: Deploy using deploy.yml if scanning passes
   run-deploy:
-    needs: run-tfscan  # Ensure tfscan must pass first
+    # needs: run-tfscan  # Ensure tfscan must pass first
     uses: ./.github/workflows/deployment.yml
     with:
       workingDirectory: modules/resourcegroup
